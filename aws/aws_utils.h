@@ -11,7 +11,9 @@
 #define AWS_IOT_PUBLISH_TEMPERATURE "sensor/temperature"
 #define AWS_IOT_PUBLISH_HUMIDITY    "sensor/humidity"
 #define AWS_IOT_PUBLISH_GAS         "sensor/gas"
+#define FAN_PIN 14
 
+void callback(char* topic, byte* payload, unsigned int length);
 void connectAWS();
 void publishMessage(const char* sensor, float value);
 

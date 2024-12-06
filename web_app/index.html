@@ -73,6 +73,36 @@
             background-color: rgba(75, 192, 192, 0.8);
         }
 
+        .btn-fan-on {
+            background-color: rgb(141, 255, 88);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-fan-on:hover {
+            background-color: rgb(184, 255, 152);
+        }
+
+        .btn-fan-off {
+            background-color: rgb(255, 62, 62);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-fan-off:hover {
+            background-color: rgb(255, 94, 94);
+        }
+
         .section {
             display: none;
         }
@@ -106,6 +136,8 @@
         <button class="btn-temperature" onclick="showSection('temperature')">Temperature</button>
         <button class="btn-gas" onclick="showSection('gas')">Gas</button>
         <button class="btn-humidity" onclick="showSection('humidity')">Humidity</button>
+        <button class="btn-fan-on" onclick="sendCommand('on')">Turn Fan ON</button>
+        <button class="btn-fan-off" onclick="sendCommand('off')">Turn Fan OFF</button>
     </div>
 
     <!-- Temperature Section -->
@@ -136,7 +168,6 @@
     </div>
 
     <script>
-        // Variabile globale pentru grafice
         let temperatureCharts = [];
         let gasCharts = [];
         let humidityCharts = [];
@@ -204,6 +235,20 @@
                     }
                 }
             });
+        }
+
+        async function sendCommand(command) {
+            try {
+                const response = await fetch('http://localhost:3000/send-command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command })
+                });
+                const result = await response.text();
+                console.log(result);
+            } catch (error) {
+                console.error('Error sending command:', error);
+            }
         }
 
         function showSection(sectionId) {

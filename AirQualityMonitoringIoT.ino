@@ -14,8 +14,6 @@ const int redPin = 25;
 const int greenPin = 26;
 const int bluePin = 27;
 
-const int fanPin = 14;
-
 // Configure Wi-Fi
 const char* ssid = "DIGI-2HHy";
 const char* password = "Za3PqdGs";
@@ -45,7 +43,6 @@ void setup() {
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
-  pinMode(fanPin, OUTPUT);
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   Serial.println("Synchronized with NTP.");
   initWiFi();
@@ -57,8 +54,11 @@ void setup() {
 
 void loop() {
   client.loop();
-  digitalWrite(greenPin, HIGH);
-  //digitalWrite(fanPin, HIGH);
+  if (!client.connected()) {
+    Serial.println("Client disconnected...");
+  }
+
+  updateLED(temperature, humidity, ppm);
 
   if (millis() - lastPublishTime > publishInterval) {
     lastPublishTime = millis();
@@ -70,5 +70,32 @@ void loop() {
     publishSensorData("temperature", temperature);
     publishSensorData("humidity", humidity);
     publishSensorData("gas", ppm);
+
+    Serial.print("Published data: temperature ");
+    Serial.print(temperature);
+    Serial.print("°C, humidity ");
+    Serial.print(humidity);
+    Serial.print("%, gas (ppm) ");
+    Serial.println(ppm);
   }
+}
+
+void updateLED(float temperature, float humidity, float ppm) {
+    if ((temperature >= 20 && temperature <= 25) &&
+        (humidity >= 40 && humidity <= 60) &&
+        (ppm < 800)) {
+        digitalWrite(redPin, LOW);
+        digitalWrite(greenPin, HIGH);
+        digitalWrite(bluePin, LOW);
+    } else if ((temperature >= 16 && temperature < 20) || (temperature > 25 && temperature <= 30) ||
+               (humidity >= 30 && humidity < 40) || (humidity > 60 && humidity <= 70) ||
+               (ppm >= 800 && ppm < 1500)) {
+        digitalWrite(redPin, HIGH);
+        digitalWrite(greenPin, HIGH);
+        digitalWrite(bluePin, LOW);
+    } else {
+        digitalWrite(redPin, HIGH);
+        digitalWrite(greenPin, LOW);
+        digitalWrite(bluePin, LOW);
+    }
 }
