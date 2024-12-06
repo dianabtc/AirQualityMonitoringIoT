@@ -6,6 +6,7 @@
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+#include <time.h>
 
 #define AWS_IOT_PUBLISH_TEMPERATURE "sensor/temperature"
 #define AWS_IOT_PUBLISH_HUMIDITY    "sensor/humidity"

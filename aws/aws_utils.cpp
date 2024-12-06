@@ -29,13 +29,26 @@ void connectAWS() {
 
 void publishSensorData(const char* sensor, float value) {
   StaticJsonDocument<200> doc;
+  doc["sensorType"] = sensor;
+
   if (strcmp(sensor, "temperature") == 0) {
-    doc["temperature"] = value;
+    doc["value"] = value;
   } else if (strcmp(sensor, "humidity") == 0) {
-    doc["humidity"] = value;
+    doc["value"] = value;
   } else if (strcmp(sensor, "gas") == 0) {
-    doc["gas"] = value;
+    doc["value"] = value;
   }
+
+  time_t now = time(nullptr);
+  if (now < 100000) {
+    Serial.println("Unsynchronized time, not publishing data.");
+    return;
+  }
+  struct tm* timeInfo = localtime(&now);
+
+  char timeBuffer[30];
+  strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%dT%H:%M:%SZ", timeInfo);
+  doc["timestamp"] = timeBuffer;
 
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);
