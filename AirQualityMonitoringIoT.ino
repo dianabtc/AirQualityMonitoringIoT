@@ -81,21 +81,17 @@ void loop() {
 }
 
 void updateLED(float temperature, float humidity, float ppm) {
-    if ((temperature >= 20 && temperature <= 25) &&
-        (humidity >= 40 && humidity <= 60) &&
-        (ppm < 800)) {
-        digitalWrite(redPin, LOW);
-        digitalWrite(greenPin, HIGH);
-        digitalWrite(bluePin, LOW);
-    } else if ((temperature >= 16 && temperature < 20) || (temperature > 25 && temperature <= 30) ||
-               (humidity >= 30 && humidity < 40) || (humidity > 60 && humidity <= 70) ||
-               (ppm >= 800 && ppm < 1500)) {
-        digitalWrite(redPin, HIGH);
-        digitalWrite(greenPin, HIGH);
-        digitalWrite(bluePin, LOW);
-    } else {
-        digitalWrite(redPin, HIGH);
-        digitalWrite(greenPin, LOW);
-        digitalWrite(bluePin, LOW);
-    }
+  if (ppm < 800) {
+      digitalWrite(redPin, LOW);
+      digitalWrite(greenPin, HIGH);
+      digitalWrite(bluePin, LOW);
+  } else if (ppm >= 800 && ppm < 1500) {
+      analogWrite(redPin, 255);
+      analogWrite(greenPin, 100);
+      analogWrite(bluePin, 0);
+  } else {
+      digitalWrite(redPin, HIGH);
+      digitalWrite(greenPin, LOW);
+      digitalWrite(bluePin, LOW);
+  }
 }
