@@ -80,6 +80,10 @@ void publishSensorData(const char* sensor, float value) {
     }
 
     time_t now = time(nullptr);
+    if (now < 100000) {
+    Serial.println("Unsynchronized time, not publishing data.");
+    return;
+    }
     struct tm* timeInfo = localtime(&now);
 
     char timeBuffer[30];
