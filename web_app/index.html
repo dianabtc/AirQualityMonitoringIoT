@@ -17,6 +17,7 @@
         h1 {
             color: #ff8ad2;
             margin-bottom: 20px;
+            margin-top: 40px;
         }
 
         h2 {
@@ -127,6 +128,21 @@
         .charts-container canvas {
             margin: 0 10px;
         }
+
+        .closebtn {
+        margin-left: 15px;
+        color: white;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        }
+
+        .closebtn:hover {
+        color: black;
+        }
     </style>
 </head>
 <body>
@@ -166,6 +182,12 @@
             <canvas id="humidityBarChart"></canvas>
         </div>
     </div>
+
+    <div id="alert-container" style="position: fixed; top: 0; left: 0; width: 100%; background-color: rgb(255, 0, 170); color: white; display: none; text-align: center; padding: 10px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
+        <span id="alert-message" style="flex-grow: 1; text-align: center;"></span>
+        <span class="closebtn" onclick="document.getElementById('alert-container').style.display='none';" style="cursor: pointer; font-weight: bold; margin-left: 10px; padding: 5px;">&times;</span>
+    </div>
+    
 
     <script>
         let temperatureCharts = [];
@@ -251,6 +273,31 @@
             }
         }
 
+        async function checkAlerts() {
+            try {
+                const response = await fetch('http://localhost:3000/gas');
+                const data = await response.json();
+                console.log('Last data received: ', data[9].value)
+
+                if (data[9].value > 1500) {
+                    const alertContainer = document.getElementById('alert-container');
+                    const alertMessage = document.getElementById('alert-message');
+                    alertMessage.innerHTML = `Gas concentration is too high! Value: ${data[9].value}`;
+                    alertContainer.style.display = 'block';
+
+                    await sendCommand('on');
+                    console.log('Sending command to turn on the fan..');
+                } else {
+                    const alertContainer = document.getElementById('alert-container');
+                    alertContainer.style.display = 'none';
+
+                    console.log('Clearing alert. Gas concentration is back to normal.');
+                }
+            } catch (error) {
+                console.error('Error fetching alerts:', error);
+            }
+        }
+
         function showSection(sectionId) {
             const sections = document.querySelectorAll('.section');
             sections.forEach(section => section.classList.remove('active'));
@@ -313,6 +360,7 @@
         }
 
         showSection('temperature');
+        setInterval(checkAlerts, 5000);
     </script>
 </body>
 </html>

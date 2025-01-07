@@ -71,7 +71,7 @@ void loop() {
     publishSensorData("humidity", humidity);
     publishSensorData("gas", ppm);
 
-    Serial.print("Published data: temperature ");
+    Serial.print("Data read/published: temperature ");
     Serial.print(temperature);
     Serial.print("°C, humidity ");
     Serial.print(humidity);
