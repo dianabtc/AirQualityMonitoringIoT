@@ -21,9 +21,9 @@ Main code for the ESP32:
     Stores the certificate, private key and certificate authority for secure AWS IoT Core connection
 - web_app/
   - server.js
-    Backend server that fetches data from DynamoDB for graph visualization and publishes fan control commands to AWS IoT Core
+    Backend server that fetches data from DynamoDB for graph visualization and publishes fan control commands to AWS IoT Core. It also sends notifications using Amazon SNS.
   - index.html
-    Frontend that displays sensors data using Chart.js and provides buttons to control the fan
+    Frontend that displays sensors data using Chart.js and provides buttons to control the fan. It also shows a visual popup alert when air conditions are dangerous.
 
 ## Setup and Installation
 1. ESP32 Setup
@@ -33,9 +33,10 @@ Main code for the ESP32:
    - Configure AWS IoT Core Connections: create a Thing in AWS IoT Core, download the certificate, private key and CA and update aws_certificates.h
    - Configure WiFi with your credentials
 2. AWS Setup
-    - IoT Core: create the following MQTT topics: sensor/temperature, sensor/humidity, sensor/gas, commands/fan and set up rules to route data do DynamoDB
+    - IoT Core: create the following MQTT topics: sensor/temperature, sensor/humidity, sensor/gas, commands/fan and set up rules to route data to DynamoDB
     - DynamoDB: create a table called SensorData with Partition Key: sensorType and Sort Key: timestamp, both strings
-    - IAM Policy: create policies to allow ESP32 to iot:Connect, iot:Publish, iot:Subscribe, dynamodb:PutItem
+    - Amazon SNS: create a topic with a subscription
+    - IAM Policy: create policies to allow ESP32 to iot:Connect, iot:Publish, iot:Subscribe, dynamodb:PutItem, sns:Publish
 3. Web Application Setup
     - Install Node.js and npm
     - Install dependencies: npm install aws-sdk express cors
